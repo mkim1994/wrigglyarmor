@@ -2,17 +2,25 @@
 #include <SPI.h>
 #include <Adafruit_LSM9DS0.h>
 #include <Adafruit_Sensor.h>
+#include <Adafruit_NeoPixel.h>
 
 // i2c
 Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0();
 
-//put a button for calibrating, to get initial values for gyro and temp
+//put a button for calibrating? to get initial values for gyro and temp
 
-float initialTemperature;
-float targetTemperature;
+//put a button for Finishing. boom
+
+float initialTemp;
+float targetTemp;
+float currentTemp;
 
 float gyroV[] = {0,0,0};
 float gyroA;
+float gyroLastDir = 1; //1 or -1
+float gyroThreshold = 1000; //calibratin
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, 8, NEO_GRB + NEO_KHZ800);
 
 void setupSensor()
 {
@@ -48,24 +56,23 @@ void setup() {
     while (1);
   }
   
-  initialTemperature = 0;//lsm.temperature;
+  initialTemp = 0;//lsm.temperature;
   
   Serial.print("readings start");
   Serial.print("\t");
-  Serial.println(initialTemperature);
+  Serial.println(initialTemp);
   Serial.println("");
   Serial.println("");
 
-  targetTemperature = initialTemperature + 9; //needs 2 b tested
+  targetTemp = initialTemp + 9; //needs 2 b tested
 
-  for (int i=0; i<3; i++){
-//    gyroV[i] = 0;
-     Serial.print(gyroV[i]);
-  }
-  Serial.println("");
+  strip.begin();
+  strip.show();
 }
 
 void loop() {
+  //------get the data
+  
   lsm.read();
   
   gyroV[0] = gyroV[1];
@@ -74,11 +81,32 @@ void loop() {
 
   gyroA = average(gyroV);
 
-  Serial.println(gyroA);
+  currentTemp = lsm.temperature;
 
+  //------analyze the data
+
+  if (currentTemp >= targetTemp){
+    //you have it in your warm sweaty hands! yay!
+    
+    if (abs(gyroA)>gyroThreshold){
+      Serial.println(gyroA);
+      //it's going fast enough to count as actual movement
+      if (gyroA > 0 || gyroLastDir < 0){
+        strip.setPixelColor(0, strip.Color(25,5,5));
+        gyroLastDir = 1;
+      }else if (gyroA < 0 || gyroLastDir > 0){
+        strip.setPixelColor(0, strip.Color(5,5,25));
+        gyroLastDir = -1;
+      }
+    }
+  }
+
+  strip.show();
+  
   delay(100);
 }
 
+//gets the average of all the vals in the array
 float average(float vals[]){
   float a = 0;
   for (int i=0; i<sizeof(vals); i++){
