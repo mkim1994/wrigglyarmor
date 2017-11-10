@@ -92,10 +92,12 @@ void loop() {
       Serial.println(gyroA);
       //it's going fast enough to count as actual movement
       if (gyroA > 0 || gyroLastDir < 0){
-        strip.setPixelColor(0, strip.Color(25,5,5));
+        strip.setPixelColor(0, strip.Color(5,1,1));
+        Serial.write(1);
         gyroLastDir = 1;
       }else if (gyroA < 0 || gyroLastDir > 0){
-        strip.setPixelColor(0, strip.Color(5,5,25));
+        strip.setPixelColor(0, strip.Color(1,1,5));
+        Serial.write(-1);
         gyroLastDir = -1;
       }
     }
