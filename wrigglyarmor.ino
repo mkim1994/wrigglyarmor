@@ -3,6 +3,7 @@
 #include <Adafruit_LSM9DS0.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_NeoPixel.h>
+#include <SoftwareSerial.h>
 
 // i2c
 Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0();
@@ -66,6 +67,7 @@ void setup() {
 
   targetTemp = initialTemp + 9; //needs 2 b tested
 
+  //sCmd.addCommand("PING", pingHandler);
   strip.begin();
   strip.show();
 }
@@ -93,11 +95,15 @@ void loop() {
       //it's going fast enough to count as actual movement
       if (gyroA > 0 || gyroLastDir < 0){
         strip.setPixelColor(0, strip.Color(5,1,1));
-        Serial.write(1);
+        Serial.flush();
+       // Serial.write(1);
+       Serial.println(1);
         gyroLastDir = 1;
       }else if (gyroA < 0 || gyroLastDir > 0){
         strip.setPixelColor(0, strip.Color(1,1,5));
-        Serial.write(2);
+        //Serial.write(2);
+        Serial.flush();
+        Serial.println(-1);
         gyroLastDir = -1;
       }
     }
@@ -108,6 +114,7 @@ void loop() {
 
   strip.show();
   Serial.flush();
+  Serial.println(0);
   delay(100);
 }
 
