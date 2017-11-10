@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class InputController : MonoBehaviour {
 
-	SerialPort stream = new SerialPort("/dev/cu.usbmodemHIDP1", 9600);
+	SerialPort stream = new SerialPort("/dev/cu.usbmodem1411", 9600);
     private int pValue = 0;
 
     public int potentioMin = 0;

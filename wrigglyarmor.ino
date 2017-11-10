@@ -58,11 +58,11 @@ void setup() {
   
   initialTemp = 0;//lsm.temperature;
   
-  Serial.print("readings start");
-  Serial.print("\t");
-  Serial.println(initialTemp);
-  Serial.println("");
-  Serial.println("");
+//  Serial.print("readings start");
+//  Serial.print("\t");
+//  Serial.println(initialTemp);
+//  Serial.println("");
+//  Serial.println("");
 
   targetTemp = initialTemp + 9; //needs 2 b tested
 
@@ -89,7 +89,7 @@ void loop() {
     //you have it in your warm sweaty hands! yay!
     
     if (abs(gyroA)>gyroThreshold){
-      Serial.println(gyroA);
+//      Serial.println(gyroA);
       //it's going fast enough to count as actual movement
       if (gyroA > 0 || gyroLastDir < 0){
         strip.setPixelColor(0, strip.Color(5,1,1));
@@ -97,14 +97,17 @@ void loop() {
         gyroLastDir = 1;
       }else if (gyroA < 0 || gyroLastDir > 0){
         strip.setPixelColor(0, strip.Color(1,1,5));
-        Serial.write(-1);
+        Serial.write(2);
         gyroLastDir = -1;
       }
     }
   }
+  else{
+    strip.setPixelColor(0,strip.Color(0,0,0));
+  }
 
   strip.show();
-  
+  Serial.flush();
   delay(100);
 }
 
