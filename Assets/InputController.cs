@@ -8,10 +8,10 @@ using UnityEngine.UI;
 public class InputController : MonoBehaviour {
 
 	SerialPort stream = new SerialPort("/dev/cu.usbmodemHIDP1", 9600);
-    private float pValue = 0;
+    private int pValue = 0;
 
-    public float potentioMin = 0;
-	public float potentioLimit = 0;
+    public int potentioMin = 0;
+	public int potentioLimit = 0;
 
 
 
@@ -24,7 +24,7 @@ public class InputController : MonoBehaviour {
     void Update()
     {
         string value = stream.ReadLine();
-        pValue = float.Parse(Regex.Match(value, @"\d+").Value);
+        pValue = int.Parse(Regex.Match(value, @"\d+").Value);
 		Debug.Log (pValue);
 
 
