@@ -3,18 +3,13 @@ import processing.sound.*;
 import java.io.File; 
 
 Serial myPort;  // Create object from Serial class
-
+SoundFile transformationMusic;
+SoundFile finishMusic;
 int val;
 
-SoundFile music;
-SoundFile endMusic;
-
-boolean isEnd;
+String mode = "start";
 
 void setup(){
-  music = new SoundFile(this, "rio8 - Totorie Tower OST - 10 P and J's Spicy Cafe.mp3");
-  endMusic = new SoundFile(this, "The Legend Of Korra_182218852_soundcloud.mp3");
-  
   size(200,200);
   
   println(Serial.list()[2]);
@@ -23,9 +18,10 @@ void setup(){
   
   val = 0;
   
-  music.play();
+  mode = "start";
+  transformationMusic = new SoundFile(this, "transformation.mp3");
+  finishMusic = new SoundFile(this, "finished.mp3");
   
-  isEnd = false;
 }
 
 void draw(){
@@ -42,11 +38,17 @@ void draw(){
    }else if (val == 2){
      background(100);
    }else if (val == 3){
-     //button pressed
-     if (!isEnd){
-       isEnd = true;
-       music.stop();
-       endMusic.play();
+     //button pressed for first time
+     if (mode == "start"){
+       mode = "playing";
+       transformationMusic.loop();
+     }
+   }else if (val == 4){
+     //button pressed for second time
+     if (mode == "playing"){
+       mode = "end";
+       transformationMusic.stop();
+       finishMusic.play();
      }
    }
    
@@ -55,10 +57,15 @@ void draw(){
 //for testing :-P
 void keyPressed(){
   if (key=='a'){
-    if (!isEnd){
-      isEnd = true;
-      music.stop();
-      endMusic.play();
-    }
+     if (mode == "playing"){
+       mode = "end";
+       transformationMusic.stop();
+       finishMusic.play();
+     }
+  }else if (key == 'b'){
+     if (mode == "start"){
+       mode = "playing";
+       transformationMusic.loop();
+     }
   }
 }
