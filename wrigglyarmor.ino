@@ -5,6 +5,12 @@
 #include <Adafruit_NeoPixel.h>
 #include <SoftwareSerial.h>
 
+#include "Adafruit_BLE.h"
+#include "Adafruit_BluefruitLE_SPI_h"
+#include "Adafruit_BluefruitLE_UART.h"
+
+#include "BluefruitConfig.h"
+
 // i2c
 Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0();
 
@@ -22,7 +28,7 @@ float gyroLastDir = 1; //1 or -1
 float gyroThreshold = 1000; //calibratin
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, 8, NEO_GRB + NEO_KHZ800);
-
+#define FACTORYREST_ENABLE  1
 void setupSensor()
 {
   // 1.) Set the accelerometer range
