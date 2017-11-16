@@ -7,13 +7,17 @@ SoundFile transformationMusic;
 SoundFile finishMusic;
 int val;
 
+float currentRate = 1;
+
+float rateIncrement = 0.001;
+
 String mode = "start";
 
 void setup(){
   size(200,200);
   
-  println(Serial.list()[2]);
-  String portName = Serial.list()[2];
+  println(Serial.list());
+  String portName = Serial.list()[7];
   myPort = new Serial(this, portName, 9600);
   
   val = 0;
@@ -30,27 +34,40 @@ void draw(){
    
     val = myPort.read();         // read it and store it in val
     println(val);
+   }else{
+     val = 0;
    }
    
    
    if (val == 1){
+     if(mode == "playing"){
+       currentRate+=rateIncrement;
+        transformationMusic.rate(currentRate);
+     }
      background(200);
    }else if (val == 2){
+      if(mode == "playing"){
+       currentRate+=rateIncrement;
+        transformationMusic.rate(currentRate);
+     }
      background(100);
    }else if (val == 3){
      //button pressed for first time
      if (mode == "start"){
        mode = "playing";
+       currentRate = 1;
        transformationMusic.loop();
      }
    }else if (val == 4){
      //button pressed for second time
      if (mode == "playing"){
-       mode = "end";
+       mode = "start";
        transformationMusic.stop();
        finishMusic.play();
      }
    }
+   
+   println(currentRate);
    
 }
 

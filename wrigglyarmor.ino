@@ -8,9 +8,7 @@
 // i2c
 Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0();
 
-//put a button for calibrating? to get initial values for gyro and temp
-
-//put a button for Finishing. boom
+SoftwareSerial btPort(0,1);
 
 float initialTemp;
 float targetTemp;
@@ -54,7 +52,7 @@ void setup() {
     while (!Serial);     // will pause Zero, Leonardo, etc until serial console opens
   #endif
   Serial.begin(9600);
-  
+  btPort.begin(9600);
   // Try to initialise and warn if we couldn't detect the chip
   if (!lsm.begin())
   {
@@ -72,7 +70,6 @@ void setup() {
 
   targetTemp = initialTemp + 9; //needs 2 b tested
 
-  //sCmd.addCommand("PING", pingHandler);
   strip.begin();
   strip.show();
 
@@ -105,12 +102,14 @@ void loop() {
           strip.setPixelColor(0, strip.Color(3,1,1));
         }
         Serial.write(1);
+        btPort.write(1);
         gyroLastDir = 1;
       }else if (gyroA < 0 || gyroLastDir > 0){
         if (numButtonPresses==1){
           strip.setPixelColor(0, strip.Color(1,1,3));
         }
         Serial.write(2);
+        btPort.write(2);
         gyroLastDir = -1;
       }
     }
@@ -125,9 +124,11 @@ void loop() {
     numButtonPresses++;
     if (numButtonPresses == 1){
       Serial.write(3);
+      btPort.write(3);
     }
     if (numButtonPresses == 2){
       Serial.write(4);
+      btPort.write(4);
       strip.setPixelColor(0,strip.Color(50,10,40));
       numButtonPresses = 0; //so you can restart
     }
