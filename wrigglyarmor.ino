@@ -5,12 +5,6 @@
 #include <Adafruit_NeoPixel.h>
 #include <SoftwareSerial.h>
 
-#include "Adafruit_BLE.h"
-#include "Adafruit_BluefruitLE_SPI_h"
-#include "Adafruit_BluefruitLE_UART.h"
-
-#include "BluefruitConfig.h"
-
 // i2c
 Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0();
 
@@ -26,6 +20,11 @@ float gyroV[] = {0,0,0};
 float gyroA;
 float gyroLastDir = 1; //1 or -1
 float gyroThreshold = 1000; //calibratin
+
+int buttonPin = 9;
+int buttonState = LOW;
+int buttonLastState = HIGH;
+int numButtonPresses = 0;
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, 8, NEO_GRB + NEO_KHZ800);
 #define FACTORYREST_ENABLE  1
@@ -76,6 +75,8 @@ void setup() {
   //sCmd.addCommand("PING", pingHandler);
   strip.begin();
   strip.show();
+
+  pinMode(buttonPin, INPUT_PULLUP);
 }
 
 void loop() {
@@ -100,16 +101,16 @@ void loop() {
 //      Serial.println(gyroA);
       //it's going fast enough to count as actual movement
       if (gyroA > 0 || gyroLastDir < 0){
-        strip.setPixelColor(0, strip.Color(5,1,1));
-        Serial.flush();
-       // Serial.write(1);
-       Serial.println(1);
+        if (numButtonPresses==1){
+          strip.setPixelColor(0, strip.Color(3,1,1));
+        }
+        Serial.write(1);
         gyroLastDir = 1;
       }else if (gyroA < 0 || gyroLastDir > 0){
-        strip.setPixelColor(0, strip.Color(1,1,5));
-        //Serial.write(2);
-        Serial.flush();
-        Serial.println(-1);
+        if (numButtonPresses==1){
+          strip.setPixelColor(0, strip.Color(1,1,3));
+        }
+        Serial.write(2);
         gyroLastDir = -1;
       }
     }
@@ -118,9 +119,25 @@ void loop() {
     strip.setPixelColor(0,strip.Color(0,0,0));
   }
 
+  buttonState = digitalRead(buttonPin);
+  if (buttonState==LOW && buttonLastState == HIGH){
+    buttonLastState = LOW;
+    numButtonPresses++;
+    if (numButtonPresses == 1){
+      Serial.write(3);
+    }
+    if (numButtonPresses == 2){
+      Serial.write(4);
+      strip.setPixelColor(0,strip.Color(50,10,40));
+      numButtonPresses = 0; //so you can restart
+    }
+  }
+  if (buttonState==HIGH && buttonLastState == LOW){
+    buttonLastState = HIGH;
+  }
+  
+
   strip.show();
-  Serial.flush();
-  Serial.println(0);
   delay(100);
 }
 
