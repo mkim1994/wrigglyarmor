@@ -8,7 +8,7 @@
 // i2c
 Adafruit_LSM9DS0 lsm = Adafruit_LSM9DS0();
 
-SoftwareSerial btPort(0,1);
+SoftwareSerial btPort(6,10);
 
 float initialTemp;
 float targetTemp;

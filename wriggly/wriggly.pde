@@ -17,7 +17,7 @@ void setup(){
   size(200,200);
   
   println(Serial.list());
-  String portName = Serial.list()[7];
+  String portName = Serial.list()[4];
   myPort = new Serial(this, portName, 9600);
   
   val = 0;
@@ -67,7 +67,7 @@ void draw(){
      }
    }
    
-   println(currentRate);
+   //println(currentRate);
    
 }
 
